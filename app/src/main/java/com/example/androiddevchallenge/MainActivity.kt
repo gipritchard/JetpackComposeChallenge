@@ -33,10 +33,17 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -44,6 +51,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.androiddevchallenge.repository.Doggo
 import com.example.androiddevchallenge.repository.DoggoRepository
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.theme.typography
 
 class MainActivity : AppCompatActivity() {
 
@@ -101,23 +109,42 @@ fun DarkPreview() {
 
 @Composable
 fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
-    Card {
+    Card(
+        modifier = Modifier
+            .padding(4.dp)
+            .clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.medium,
+        backgroundColor = MaterialTheme.colors.surface,
+        elevation = Dp(2f)
+    ) {
         Row(modifier = Modifier
             .padding(Dp(8f))
-            .clickable(onClick = onClick)
             .fillMaxWidth()) {
-            Image(
-                painter = painterResource(id = doggo.pictureResId),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(Dp(100f), Dp(100f))
-                    .clip(shape = RoundedCornerShape(Dp(4f)))
-            )
-            Column(verticalArrangement = Arrangement.Bottom) {
-                Text(text = "Name: ${doggo.name}", modifier = Modifier.padding(Dp(8f)))
-                Text(text = "Breed: ${doggo.breed}", modifier = Modifier.padding(Dp(8f)))
+            DoggoImage(doggo)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxHeight()) {
+
+                Text(text = "${doggo.name}",
+                     modifier = Modifier.padding(horizontal = 8.dp),
+                     style = typography.h6)
+
+                Text(text = "Breed: ${doggo.breed}",
+                    modifier = Modifier.padding(Dp(8f)),
+                    fontStyle = FontStyle.Italic)
             }
         }
     }
+}
 
+@Composable
+fun DoggoImage(doggo: Doggo) {
+    Image(
+        painter = painterResource(id = doggo.pictureResId),
+        contentDescription = null,
+        modifier = Modifier
+            .size(Dp(100f), Dp(100f))
+            .clip(shape = RoundedCornerShape(Dp(4f))),
+        contentScale = ContentScale.Fit
+    )
 }
