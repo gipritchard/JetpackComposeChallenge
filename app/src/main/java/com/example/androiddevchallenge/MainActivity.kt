@@ -15,14 +15,32 @@
  */
 package com.example.androiddevchallenge
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.fragment.NavHostFragment
+import com.example.androiddevchallenge.repository.Doggo
+import com.example.androiddevchallenge.repository.DoggoRepository
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(this)
             }
         }
     }
@@ -38,24 +56,53 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
+fun MyApp(context: Context) {
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        val listState = rememberLazyListState()
+        LazyColumn(state = listState) {
+            items(DoggoRepository().getAllDoggos()) { doggo ->
+                DoggoListEntry(doggo) {
+                    val intent = DetailActivity.createIntent(context, doggo.id)
+                    context.startActivity(intent)
+                }
+            }
+        }
     }
 }
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
+//@Preview("Light Theme", widthDp = 360, heightDp = 640)
+//@Composable
+//fun LightPreview() {
+//    MyTheme {
+//        MyApp()
+//    }
+//}
+//
+//@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+//@Composable
+//fun DarkPreview() {
+//    MyTheme(darkTheme = true) {
+//        MyApp()
+//    }
+//}
 
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
 @Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
+    Row(modifier = Modifier
+        .padding(Dp(8f))
+        .width(IntrinsicSize.Max)
+
+        .clickable(onClick = onClick)) {
+        Image(
+            painter = painterResource(id = doggo.pictureResId),
+            contentDescription = null,
+            modifier = Modifier
+                .size(Dp(100f), Dp(100f))
+                .clip(shape = RoundedCornerShape(Dp(4f))),
+        )
+        Column(verticalArrangement = Arrangement.Bottom) {
+            Text(text = "Name: ${doggo.name}", modifier = Modifier.padding(Dp(8f)))
+            Text(text = "Breed: ${doggo.breed}", modifier = Modifier.padding(Dp(8f)))
+        }
     }
 }
