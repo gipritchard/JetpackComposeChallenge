@@ -19,43 +19,30 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.fontResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentContainerView
-import androidx.navigation.NavHost
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.fragment.NavHostFragment
 import com.example.androiddevchallenge.repository.Doggo
 import com.example.androiddevchallenge.repository.DoggoRepository
+import com.example.androiddevchallenge.ui.DoggoSummaryBreed
+import com.example.androiddevchallenge.ui.DoggoSummaryImage
+import com.example.androiddevchallenge.ui.DoggoSummaryName
 import com.example.androiddevchallenge.ui.theme.MyTheme
-import com.example.androiddevchallenge.ui.theme.typography
 
 class MainActivity : AppCompatActivity() {
 
-    private val doggos = DoggoRepository().getAllDoggos()
+    private val doggos = DoggoRepository().getAllDoggos().sortedBy { d -> d.name }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +51,31 @@ class MainActivity : AppCompatActivity() {
                 MyApp(this, doggos)
             }
         }
+    }
+
+}
+
+@Preview("Light Theme", widthDp = 360, heightDp = 640)
+@Composable
+fun LightPreview() {
+
+    val context = LocalContext.current
+    val doggos = DoggoRepository().getAllDoggos().sortedBy { d -> d.name }
+
+    MyTheme {
+        MyApp(context, doggos)
+    }
+}
+
+@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+@Composable
+fun DarkPreview() {
+
+    val context = LocalContext.current
+    val doggos = DoggoRepository().getAllDoggos().sortedBy { d -> d.name }
+
+    MyTheme(darkTheme = true) {
+        MyApp(context, doggos)
     }
 }
 
@@ -83,30 +95,6 @@ fun MyApp(context: Context, goodBois: List<Doggo>) {
     }
 }
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-
-    val context = LocalContext.current
-    val doggos = DoggoRepository().getAllDoggos()
-
-    MyTheme {
-        MyApp(context, doggos)
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-
-    val context = LocalContext.current
-    val doggos = DoggoRepository().getAllDoggos()
-
-    MyTheme(darkTheme = true) {
-        MyApp(context, doggos)
-    }
-}
-
 @Composable
 fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
     Card(
@@ -120,31 +108,15 @@ fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
         Row(modifier = Modifier
             .padding(Dp(8f))
             .fillMaxWidth()) {
-            DoggoImage(doggo)
+            DoggoSummaryImage(doggo)
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight()) {
-
-                Text(text = "${doggo.name}",
-                     modifier = Modifier.padding(horizontal = 8.dp),
-                     style = typography.h6)
-
-                Text(text = "Breed: ${doggo.breed}",
-                    modifier = Modifier.padding(Dp(8f)),
-                    fontStyle = FontStyle.Italic)
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()) {
+                DoggoSummaryName(doggo)
+                DoggoSummaryBreed(doggo)
             }
         }
     }
-}
-
-@Composable
-fun DoggoImage(doggo: Doggo) {
-    Image(
-        painter = painterResource(id = doggo.pictureResId),
-        contentDescription = null,
-        modifier = Modifier
-            .size(Dp(100f), Dp(100f))
-            .clip(shape = RoundedCornerShape(Dp(4f))),
-        contentScale = ContentScale.Fit
-    )
 }
