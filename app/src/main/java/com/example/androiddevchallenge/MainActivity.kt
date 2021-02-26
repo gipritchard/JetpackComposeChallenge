@@ -26,12 +26,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -44,11 +46,14 @@ import com.example.androiddevchallenge.repository.DoggoRepository
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
+
+    private val doggos = DoggoRepository().getAllDoggos()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp(this)
+                MyApp(this, doggos)
             }
         }
     }
@@ -56,11 +61,11 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp(context: Context) {
+fun MyApp(context: Context, goodBois: List<Doggo>) {
     Surface(color = MaterialTheme.colors.background) {
         val listState = rememberLazyListState()
         LazyColumn(state = listState) {
-            items(DoggoRepository().getAllDoggos()) { doggo ->
+            items(goodBois) { doggo ->
                 DoggoListEntry(doggo) {
                     val intent = DetailActivity.createIntent(context, doggo.id)
                     context.startActivity(intent)
@@ -70,39 +75,49 @@ fun MyApp(context: Context) {
     }
 }
 
-//@Preview("Light Theme", widthDp = 360, heightDp = 640)
-//@Composable
-//fun LightPreview() {
-//    MyTheme {
-//        MyApp()
-//    }
-//}
-//
-//@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-//@Composable
-//fun DarkPreview() {
-//    MyTheme(darkTheme = true) {
-//        MyApp()
-//    }
-//}
+@Preview("Light Theme", widthDp = 360, heightDp = 640)
+@Composable
+fun LightPreview() {
+
+    val context = LocalContext.current
+    val doggos = DoggoRepository().getAllDoggos()
+
+    MyTheme {
+        MyApp(context, doggos)
+    }
+}
+
+@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+@Composable
+fun DarkPreview() {
+
+    val context = LocalContext.current
+    val doggos = DoggoRepository().getAllDoggos()
+
+    MyTheme(darkTheme = true) {
+        MyApp(context, doggos)
+    }
+}
 
 @Composable
 fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
-    Row(modifier = Modifier
-        .padding(Dp(8f))
-        .width(IntrinsicSize.Max)
-
-        .clickable(onClick = onClick)) {
-        Image(
-            painter = painterResource(id = doggo.pictureResId),
-            contentDescription = null,
-            modifier = Modifier
-                .size(Dp(100f), Dp(100f))
-                .clip(shape = RoundedCornerShape(Dp(4f))),
-        )
-        Column(verticalArrangement = Arrangement.Bottom) {
-            Text(text = "Name: ${doggo.name}", modifier = Modifier.padding(Dp(8f)))
-            Text(text = "Breed: ${doggo.breed}", modifier = Modifier.padding(Dp(8f)))
+    Card {
+        Row(modifier = Modifier
+            .padding(Dp(8f))
+            .clickable(onClick = onClick)
+            .fillMaxWidth()) {
+            Image(
+                painter = painterResource(id = doggo.pictureResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(Dp(100f), Dp(100f))
+                    .clip(shape = RoundedCornerShape(Dp(4f)))
+            )
+            Column(verticalArrangement = Arrangement.Bottom) {
+                Text(text = "Name: ${doggo.name}", modifier = Modifier.padding(Dp(8f)))
+                Text(text = "Breed: ${doggo.breed}", modifier = Modifier.padding(Dp(8f)))
+            }
         }
     }
+
 }
