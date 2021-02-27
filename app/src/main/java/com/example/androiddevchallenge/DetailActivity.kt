@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge
 
 import android.content.Context
@@ -7,9 +22,16 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,10 +64,7 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         } ?: finish()
-
     }
-
-
 
     @Composable
     fun DetailsScreen(context: Context, doggo: Doggo) {
@@ -60,20 +79,25 @@ class DetailActivity : AppCompatActivity() {
 
                 DoggoDetailText("Age: ${doggo.age}", R.drawable.ic_baseline_cake_24)
 
-                Box(modifier = Modifier
-                    .background(MaterialTheme.colors.primary)
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(8.dp))
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.primary)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(8.dp)
+                )
 
-                Text(text = "About Me",
+                Text(
+                    text = "About Me",
                     modifier = Modifier.padding(8.dp),
-                    style = typography.subtitle1)
+                    style = typography.subtitle1
+                )
 
-                Text(text = doggo.description,
+                Text(
+                    text = doggo.description,
                     modifier = Modifier.padding(8.dp),
-                    style = typography.body2)
-
+                    style = typography.body2
+                )
             }
 
 //            FloatingActionButton(modifier = Modifier.size(80.dp, 80.dp),
@@ -86,7 +110,6 @@ class DetailActivity : AppCompatActivity() {
 //            }
         }
     }
-
 
     @Composable
     fun DoggoHeaderImage(doggo: Doggo) {
@@ -101,12 +124,16 @@ class DetailActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun DoggoDetailText(text:String, iconResourceId: Int) {
+    fun DoggoDetailText(text: String, iconResourceId: Int) {
         Row(modifier = Modifier.padding(8.dp)) {
-            Image(painter = painterResource(id = iconResourceId),
-                contentDescription = null)
-            Text(text = text,
-                modifier = Modifier.padding(horizontal = 8.dp))
+            Image(
+                painter = painterResource(id = iconResourceId),
+                contentDescription = null
+            )
+            Text(
+                text = text,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
         }
     }
 
@@ -132,13 +159,11 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-
     companion object {
         private const val tagDoggoId = "__Doggo_Id__"
-        fun createIntent(ctx: Context, doggoId: Int) : Intent =
+        fun createIntent(ctx: Context, doggoId: Int): Intent =
             Intent(ctx, DetailActivity::class.java).apply {
                 putExtra(tagDoggoId, doggoId)
             }
     }
-
 }

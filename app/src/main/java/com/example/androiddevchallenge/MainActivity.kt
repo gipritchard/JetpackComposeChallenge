@@ -20,7 +20,12 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
@@ -105,15 +109,18 @@ fun DoggoListEntry(doggo: Doggo, onClick: () -> Unit) {
         backgroundColor = MaterialTheme.colors.surface,
         elevation = Dp(2f)
     ) {
-        Row(modifier = Modifier
-            .padding(Dp(8f))
-            .fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .padding(Dp(8f))
+                .fillMaxWidth()
+        ) {
             DoggoSummaryImage(doggo)
             Column(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+            ) {
                 DoggoSummaryName(doggo)
                 DoggoSummaryBreed(doggo)
             }
