@@ -35,7 +35,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -60,14 +59,14 @@ class DetailActivity : AppCompatActivity() {
         doggo?.run {
             setContent {
                 MyTheme {
-                    DetailsScreen(this@DetailActivity, this)
+                    DetailsScreen(this)
                 }
             }
         } ?: finish()
     }
 
     @Composable
-    fun DetailsScreen(context: Context, doggo: Doggo) {
+    fun DetailsScreen(doggo: Doggo) {
         Surface(color = MaterialTheme.colors.background) {
             Column() {
                 DoggoHeaderImage(doggo)
@@ -140,22 +139,18 @@ class DetailActivity : AppCompatActivity() {
     @Preview("Light Theme", widthDp = 360, heightDp = 640)
     @Composable
     fun LightPreview() {
-        val context = LocalContext.current
         val doggo = DoggoRepository().getDoggoById(0)
-
         MyTheme {
-            DetailsScreen(context, doggo!!)
+            DetailsScreen(doggo!!)
         }
     }
 
     @Preview("Dark Theme", widthDp = 360, heightDp = 640)
     @Composable
     fun DarkPreview() {
-        val context = LocalContext.current
         val doggo = DoggoRepository().getDoggoById(0)
-
         MyTheme(darkTheme = true) {
-            DetailsScreen(context, doggo!!)
+            DetailsScreen(doggo!!)
         }
     }
 
