@@ -6,10 +6,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,9 +18,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.extensions.getGenderDrawableResource
 import com.example.androiddevchallenge.repository.Doggo
 import com.example.androiddevchallenge.repository.DoggoRepository
+import com.example.androiddevchallenge.ui.DoggoSummaryBreed
+import com.example.androiddevchallenge.ui.DoggoSummaryName
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.theme.typography
 
 class DetailActivity : AppCompatActivity() {
 
@@ -34,7 +38,7 @@ class DetailActivity : AppCompatActivity() {
         doggo?.run {
             setContent {
                 MyTheme {
-                    DoggoView(this)
+                    DetailsScreen(this@DetailActivity, this)
                 }
             }
         } ?: finish()
@@ -44,25 +48,67 @@ class DetailActivity : AppCompatActivity() {
 
 
     @Composable
-    fun DetailsScreen(doggo: Doggo) {
-        DoggoView(doggo)
+    fun DetailsScreen(context: Context, doggo: Doggo) {
+        Surface(color = MaterialTheme.colors.background) {
+            Column() {
+                DoggoHeaderImage(doggo)
+
+                DoggoSummaryName(doggo)
+                DoggoSummaryBreed(doggo)
+
+                DoggoDetailText("Gender: ${doggo.gender}", doggo.getGenderDrawableResource())
+
+                DoggoDetailText("Age: ${doggo.age}", R.drawable.ic_baseline_cake_24)
+
+                Box(modifier = Modifier
+                    .background(MaterialTheme.colors.primary)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(8.dp))
+
+                Text(text = "About Me",
+                    modifier = Modifier.padding(8.dp),
+                    style = typography.subtitle1)
+
+                Text(text = doggo.description,
+                    modifier = Modifier.padding(8.dp),
+                    style = typography.body2)
+
+            }
+
+//            FloatingActionButton(modifier = Modifier.size(80.dp, 80.dp),
+//                onClick = {
+//                    context.startActivity(Intent(Intent.ACTION_DIAL).apply {
+//                        data = Uri.parse("tel:"+7775551234);
+//                    })
+//            }) {
+//                Image(painter = painterResource(id = R.drawable.ic_baseline_phone_24), contentDescription = "Call")
+//            }
+        }
     }
 
 
     @Composable
-    fun DoggoView(doggo: Doggo) {
-        Column {
-            Image(
-                painter = painterResource(id = doggo.pictureResId),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(shape = RoundedCornerShape(Dp(4f))),
-            )
-        }
+    fun DoggoHeaderImage(doggo: Doggo) {
+        Image(
+            painter = painterResource(id = doggo.pictureResId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(shape = RoundedCornerShape(Dp(4f))),
+        )
     }
 
+    @Composable
+    fun DoggoDetailText(text:String, iconResourceId: Int) {
+        Row(modifier = Modifier.padding(8.dp)) {
+            Image(painter = painterResource(id = iconResourceId),
+                contentDescription = null)
+            Text(text = text,
+                modifier = Modifier.padding(horizontal = 8.dp))
+        }
+    }
 
     @Preview("Light Theme", widthDp = 360, heightDp = 640)
     @Composable
@@ -71,7 +117,7 @@ class DetailActivity : AppCompatActivity() {
         val doggo = DoggoRepository().getDoggoById(0)
 
         MyTheme {
-            DetailsScreen(doggo!!)
+            DetailsScreen(context, doggo!!)
         }
     }
 
@@ -82,7 +128,7 @@ class DetailActivity : AppCompatActivity() {
         val doggo = DoggoRepository().getDoggoById(0)
 
         MyTheme(darkTheme = true) {
-            DetailsScreen(doggo!!)
+            DetailsScreen(context, doggo!!)
         }
     }
 
